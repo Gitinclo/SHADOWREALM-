@@ -6,53 +6,81 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libglfw3-dev libglm-dev libgl1-mesa-dev
+          sudo apt-get install -y libglfw3-dev libglm-dev libgl1-mesa-dev pkg-config
+      
       - name: Setup
-        run: chmod +x setup.sh && ./setup.sh
+        run: |
+          chmod +x setup.sh
+          ./setup.sh
+      
       - name: Build
-        run: cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
+        run: |
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j4
+      
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shadowrealm-linux
           path: build/shadowrealm
+          retention-days: 30
 
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
       - name: Install dependencies
-        run: brew install glfw glm cmake
+        run: |
+          brew install glfw glm cmake
+      
       - name: Setup
-        run: chmod +x setup.sh && ./setup.sh
+        run: |
+          chmod +x setup.sh
+          ./setup.sh
+      
       - name: Build
-        run: cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
+        run: |
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j4
+      
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shadowrealm-macos
           path: build/shadowrealm
+          retention-days: 30
 
-  build-android:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Android NDK
-        uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r25b
+      - uses: actions/checkout@v4
+      
+      - name: Install CMake
+        run: choco install cmake -y
+      
       - name: Setup
-        run: chmod +x setup.sh && ./setup.sh
-      - name: Build Android
+        shell: bash
         run: |
-          export ANDROID_NDK_ROOT=${{ steps.setup-ndk.outputs.ndk-path }}
-          chmod +x build_android.sh && ./build_android.sh
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022"
+      
+      - name: Build
+        run: |
+          cd build
+          cmake --build . --config Release
+      
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: shadowrealm-android
-          path: build_android/libshadowrealm.so
+          name: shadowrealm-windows
+          path: build/Release/shadowrealm.exe
+          retention-days: 30
