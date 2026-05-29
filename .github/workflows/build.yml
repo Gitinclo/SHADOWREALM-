@@ -1,0 +1,58 @@
+name: Build ShadowRealm 3D
+
+on: [push, pull_request]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglfw3-dev libglm-dev libgl1-mesa-dev
+      - name: Setup
+        run: chmod +x setup.sh && ./setup.sh
+      - name: Build
+        run: cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: shadowrealm-linux
+          path: build/shadowrealm
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: brew install glfw glm cmake
+      - name: Setup
+        run: chmod +x setup.sh && ./setup.sh
+      - name: Build
+        run: cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: shadowrealm-macos
+          path: build/shadowrealm
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r25b
+      - name: Setup
+        run: chmod +x setup.sh && ./setup.sh
+      - name: Build Android
+        run: |
+          export ANDROID_NDK_ROOT=${{ steps.setup-ndk.outputs.ndk-path }}
+          chmod +x build_android.sh && ./build_android.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: shadowrealm-android
+          path: build_android/libshadowrealm.so
