@@ -84,3 +84,133 @@ jobs:
           name: shadowrealm-windows
           path: build/Release/shadowrealm.exe
           retention-days: 30
+cat > .github/workflows/build.yml << 'EOF'
+name: Build ShadowRealm 3D
+
+on: [push, pull_request]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglfw3-dev libglm-dev libgl1-mesa-dev pkg-config
+      
+      - name: Setup
+        run: |
+          chmod +x setup.sh
+          ./setup.sh
+      
+      - name: Build
+        run: |
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j4
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadowrealm-linux
+          path: build/shadowrealm
+          retention-days: 30
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          brew install glfw glm cmake
+      
+      - name: Setup
+        run: |
+          chmod +x setup.sh
+          ./setup.sh
+      
+      - name: Build
+        run: |
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j4
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadowrealm-macos
+          path: build/shadowrealm
+          retention-days: 30
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install CMake and Ninja
+        run: |
+          choco install cmake ninja -y
+      
+      - name: Setup directories
+        shell: bash
+        run: |
+          mkdir -p build
+          mkdir -p include/glad
+          mkdir -p imgui/backends
+          mkdir -p src
+      
+      - name: Download GLAD
+        shell: bash
+        run: |
+          if [ ! -f "include/glad/gl.h" ]; then
+            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.zip -o /tmp/glad.zip
+            unzip -q /tmp/glad.zip -d . 2>/dev/null || true
+            rm -f /tmp/glad.zip
+          fi
+      
+      - name: Download GLM
+        shell: bash
+        run: |
+          if [ ! -d "glm/glm" ]; then
+            curl -sL https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip -o /tmp/glm.zip
+            unzip -q /tmp/glm.zip -d . 2>/dev/null || true
+            rm -f /tmp/glm.zip
+          fi
+      
+      - name: Download ImGui
+        shell: bash
+        run: |
+          if [ ! -f "imgui/imgui.h" ]; then
+            git clone --depth 1 https://github.com/ocornut/imgui.git /tmp/imgui_src 2>/dev/null
+            cp /tmp/imgui_src/imgui.* imgui/
+            cp /tmp/imgui_src/imgui_draw.cpp imgui/
+            cp /tmp/imgui_src/imgui_tables.cpp imgui/
+            cp /tmp/imgui_src/imgui_widgets.cpp imgui/
+            cp /tmp/imgui_src/backends/imgui_impl_glfw.* imgui/backends/ 2>/dev/null || true
+            cp /tmp/imgui_src/backends/imgui_impl_opengl3.* imgui/backends/ 2>/dev/null || true
+            rm -rf /tmp/imgui_src
+          fi
+      
+      - name: Configure with CMake
+        shell: bash
+        run: |
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja"
+      
+      - name: Build
+        shell: bash
+        run: |
+          cd build
+          ninja
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadowrealm-windows
+          path: build/shadowrealm.exe
+          retention-days: 30
+EOF
+
