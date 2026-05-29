@@ -60,7 +60,7 @@ detect_os() {
 
 # Check if running in CI environment
 is_ci() {
-    [[ -n "$CI" ]] || [[ -n "$GITHUB_ACTIONS" ]] || [[ -n "$CONTINUOUS_INTEGRATION" ]]
+    [[ -n "$CI" ]] || [[ -n "$GITHUB_ACTIONS" ]] || [[ -n "$CONTINUOUS_INTEGRATION" ]] || [[ -z "$TERM" ]]
 }
 
 # Install dependencies based on OS
@@ -286,8 +286,8 @@ build_project() {
 
 # Main setup flow
 main() {
-    # Don't clear in CI environments
-    if ! is_ci; then
+    # Only clear screen in interactive environments with TERM set
+    if ! is_ci && [[ -n "$TERM" ]] && command -v clear &> /dev/null; then
         clear
     fi
     
