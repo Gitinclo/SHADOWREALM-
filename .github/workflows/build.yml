@@ -11,17 +11,40 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libglfw3-dev libglm-dev libgl1-mesa-dev pkg-config
+          sudo apt-get install -y build-essential cmake libglfw3-dev libglm-dev libgl1-mesa-dev pkg-config
       
-      - name: Setup
+      - name: Download external libraries
         run: |
-          chmod +x setup.sh
-          ./setup.sh
+          mkdir -p glm include/glad imgui/backends
+          
+          # Download GLM
+          if [ ! -d "glm/glm" ]; then
+            git clone --depth 1 https://github.com/g-truc/glm.git glm_temp
+            mv glm_temp/glm glm/glm
+            rm -rf glm_temp
+          fi
+          
+          # Download ImGui
+          if [ ! -f "imgui/imgui.h" ]; then
+            git clone --depth 1 https://github.com/ocornut/imgui.git imgui_temp
+            mv imgui_temp/* imgui/
+            rm -rf imgui_temp
+          fi
+          
+          # Download GLAD
+          if [ ! -f "include/glad/gl.h" ]; then
+            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.h -o include/glad/gl.h || echo "GLAD download failed"
+          fi
+      
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
       
       - name: Build
         run: |
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
           make -j4
       
       - name: Upload artifact
@@ -40,15 +63,38 @@ jobs:
         run: |
           brew install glfw glm cmake
       
-      - name: Setup
+      - name: Download external libraries
         run: |
-          chmod +x setup.sh
-          ./setup.sh
+          mkdir -p glm include/glad imgui/backends
+          
+          # Download GLM
+          if [ ! -d "glm/glm" ]; then
+            git clone --depth 1 https://github.com/g-truc/glm.git glm_temp
+            mv glm_temp/glm glm/glm
+            rm -rf glm_temp
+          fi
+          
+          # Download ImGui
+          if [ ! -f "imgui/imgui.h" ]; then
+            git clone --depth 1 https://github.com/ocornut/imgui.git imgui_temp
+            mv imgui_temp/* imgui/
+            rm -rf imgui_temp
+          fi
+          
+          # Download GLAD
+          if [ ! -f "include/glad/gl.h" ]; then
+            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.h -o include/glad/gl.h || echo "GLAD download failed"
+          fi
+      
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
       
       - name: Build
         run: |
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
           make -j4
       
       - name: Upload artifact
@@ -66,48 +112,38 @@ jobs:
       - name: Install CMake
         run: choco install cmake -y
       
-      - name: Setup directories
+      - name: Download external libraries
         shell: bash
         run: |
-          mkdir -p build
-          mkdir -p include/glad
-          mkdir -p imgui/backends
-          mkdir -p src
-      
-      - name: Download GLAD
-        shell: bash
-        run: |
-          if [ ! -f "include/glad/gl.h" ]; then
-            echo "Downloading GLAD..."
-            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.h -o include/glad/gl.h 2>/dev/null || echo "Using minimal GLAD header"
-          fi
-      
-      - name: Download GLM
-        shell: bash
-        run: |
+          mkdir -p build glm include/glad imgui/backends
+          
+          # Download GLM
           if [ ! -d "glm/glm" ]; then
             echo "Downloading GLM..."
-            mkdir -p glm
-            curl -sL https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip -o /tmp/glm.zip
-            unzip -q /tmp/glm.zip -d glm 2>/dev/null || echo "GLM extraction failed"
-            rm -f /tmp/glm.zip
+            git clone --depth 1 https://github.com/g-truc/glm.git glm_temp
+            mv glm_temp/glm glm/glm
+            rm -rf glm_temp
           fi
-      
-      - name: Download ImGui
-        shell: bash
-        run: |
+          
+          # Download ImGui
           if [ ! -f "imgui/imgui.h" ]; then
             echo "Downloading ImGui..."
-            git clone --depth 1 https://github.com/ocornut/imgui.git /tmp/imgui_src 2>/dev/null || true
-            if [ -d "/tmp/imgui_src" ]; then
-              cp /tmp/imgui_src/imgui.* imgui/ 2>/dev/null || true
-              cp /tmp/imgui_src/imgui_draw.cpp imgui/ 2>/dev/null || true
-              cp /tmp/imgui_src/imgui_tables.cpp imgui/ 2>/dev/null || true
-              cp /tmp/imgui_src/imgui_widgets.cpp imgui/ 2>/dev/null || true
+            git clone --depth 1 https://github.com/ocornut/imgui.git imgui_temp
+            if [ -d "imgui_temp" ]; then
+              cp imgui_temp/imgui.* imgui/ 2>/dev/null || true
+              cp imgui_temp/imgui_draw.cpp imgui/ 2>/dev/null || true
+              cp imgui_temp/imgui_tables.cpp imgui/ 2>/dev/null || true
+              cp imgui_temp/imgui_widgets.cpp imgui/ 2>/dev/null || true
               mkdir -p imgui/backends
-              cp /tmp/imgui_src/backends/imgui_impl_opengl3.* imgui/backends/ 2>/dev/null || true
-              rm -rf /tmp/imgui_src
+              cp imgui_temp/backends/imgui_impl_opengl3.* imgui/backends/ 2>/dev/null || true
+              rm -rf imgui_temp
             fi
+          fi
+          
+          # Download GLAD
+          if [ ! -f "include/glad/gl.h" ]; then
+            echo "Downloading GLAD..."
+            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.h -o include/glad/gl.h || echo "GLAD download failed"
           fi
       
       - name: Configure with CMake
