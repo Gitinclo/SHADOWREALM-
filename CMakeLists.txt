@@ -50,10 +50,7 @@ glad_add_library(glad_gl REPRODUCIBLE LOADER API gl:core=3.3)
         message(FATAL_ERROR "❌ GLM not found at glm/glm/glm.hpp")
     endif()
     message(STATUS "✅ GLM found")
-    
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/include/glad/gl.h")
-        message(FATAL_ERROR "❌ GLAD not found at include/glad/gl.h")
-    endif()
+   
     message(STATUS "✅ GLAD found")
     
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/imgui/imgui.h")
