@@ -19,7 +19,7 @@ if(NOT ANDROID)
     message(STATUS "✅ OpenGL found: ${OPENGL_LIBRARIES}")
     
 
-    // ✅ CORRECT order at top of shadowrealm.cpp
+    # ✅ CORRECT order at top of shadowrealm.cpp
 #include "glad/gl.h"         // GLAD first — loads OpenGL function pointers
 #define GLFW_INCLUDE_NONE    // Prevents GLFW from including its own OpenGL header
 #include <GLFW/glfw3.h>      // GLFW second
