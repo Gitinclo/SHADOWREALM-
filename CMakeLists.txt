@@ -18,6 +18,15 @@ if(NOT ANDROID)
     find_package(OpenGL REQUIRED)
     message(STATUS "✅ OpenGL found: ${OPENGL_LIBRARIES}")
     
+     include(FetchContent)
+FetchContent_Declare(
+    glad
+    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+    GIT_TAG        v2.0.8
+    SOURCE_SUBDIR  cmake
+)
+FetchContent_MakeAvailable(glad)
+glad_add_library(glad_gl REPRODUCIBLE LOADER API gl:core=3.3)
 
     # ✅ CORRECT order at top of shadowrealm.cpp
 #include "glad/gl.h"         # GLAD first — loads OpenGL function pointers
