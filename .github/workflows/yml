@@ -1,0 +1,5 @@
+- name: Setup MSVC
+  uses: ilammy/msvc-dev-cmd@v1   # Add this step before cmake
+
+- name: Configure
+  run: cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja"
