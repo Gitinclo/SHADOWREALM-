@@ -18,6 +18,12 @@ if(NOT ANDROID)
     find_package(OpenGL REQUIRED)
     message(STATUS "✅ OpenGL found: ${OPENGL_LIBRARIES}")
     
+
+    // ✅ CORRECT order at top of shadowrealm.cpp
+#include "glad/gl.h"         // GLAD first — loads OpenGL function pointers
+#define GLFW_INCLUDE_NONE    // Prevents GLFW from including its own OpenGL header
+#include <GLFW/glfw3.h>      // GLFW second
+
     # Find GLFW
     find_package(glfw3 3.3 QUIET)
     if(NOT glfw3_FOUND)
