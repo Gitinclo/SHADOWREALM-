@@ -20,9 +20,9 @@ if(NOT ANDROID)
     
 
     # ✅ CORRECT order at top of shadowrealm.cpp
-#include "glad/gl.h"         // GLAD first — loads OpenGL function pointers
-#define GLFW_INCLUDE_NONE    // Prevents GLFW from including its own OpenGL header
-#include <GLFW/glfw3.h>      // GLFW second
+#include "glad/gl.h"         # GLAD first — loads OpenGL function pointers
+#define GLFW_INCLUDE_NONE    # Prevents GLFW from including its own OpenGL header
+#include <GLFW/glfw3.h>      # GLFW second
 
     # Find GLFW
     find_package(glfw3 3.3 QUIET)
