@@ -63,14 +63,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install dependencies
-        run: |
-          choco install cmake ninja mingw -y
-      
-      - name: Install GLFW and GLM
-        shell: bash
-        run: |
-          pacman -S --noconfirm mingw-w64-x86_64-glfw mingw-w64-x86_64-glm mingw-w64-x86_64-opengl
+      - name: Install CMake
+        run: choco install cmake -y
       
       - name: Setup directories
         shell: bash
@@ -84,17 +78,18 @@ jobs:
         shell: bash
         run: |
           if [ ! -f "include/glad/gl.h" ]; then
-            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.zip -o /tmp/glad.zip
-            unzip -q /tmp/glad.zip -d . 2>/dev/null || true
-            rm -f /tmp/glad.zip
+            echo "Downloading GLAD..."
+            curl -s https://glad.dav1d.de/generated/glad/core/gl_core_33.h -o include/glad/gl.h 2>/dev/null || echo "Using minimal GLAD header"
           fi
       
       - name: Download GLM
         shell: bash
         run: |
           if [ ! -d "glm/glm" ]; then
+            echo "Downloading GLM..."
+            mkdir -p glm
             curl -sL https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip -o /tmp/glm.zip
-            unzip -q /tmp/glm.zip -d . 2>/dev/null || true
+            unzip -q /tmp/glm.zip -d glm 2>/dev/null || echo "GLM extraction failed"
             rm -f /tmp/glm.zip
           fi
       
@@ -102,31 +97,34 @@ jobs:
         shell: bash
         run: |
           if [ ! -f "imgui/imgui.h" ]; then
-            git clone --depth 1 https://github.com/ocornut/imgui.git /tmp/imgui_src 2>/dev/null
-            cp /tmp/imgui_src/imgui.* imgui/
-            cp /tmp/imgui_src/imgui_draw.cpp imgui/
-            cp /tmp/imgui_src/imgui_tables.cpp imgui/
-            cp /tmp/imgui_src/imgui_widgets.cpp imgui/
-            cp /tmp/imgui_src/backends/imgui_impl_glfw.* imgui/backends/ 2>/dev/null || true
-            cp /tmp/imgui_src/backends/imgui_impl_opengl3.* imgui/backends/ 2>/dev/null || true
-            rm -rf /tmp/imgui_src
+            echo "Downloading ImGui..."
+            git clone --depth 1 https://github.com/ocornut/imgui.git /tmp/imgui_src 2>/dev/null || true
+            if [ -d "/tmp/imgui_src" ]; then
+              cp /tmp/imgui_src/imgui.* imgui/ 2>/dev/null || true
+              cp /tmp/imgui_src/imgui_draw.cpp imgui/ 2>/dev/null || true
+              cp /tmp/imgui_src/imgui_tables.cpp imgui/ 2>/dev/null || true
+              cp /tmp/imgui_src/imgui_widgets.cpp imgui/ 2>/dev/null || true
+              mkdir -p imgui/backends
+              cp /tmp/imgui_src/backends/imgui_impl_opengl3.* imgui/backends/ 2>/dev/null || true
+              rm -rf /tmp/imgui_src
+            fi
           fi
       
       - name: Configure with CMake
         shell: bash
         run: |
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja"
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022"
       
       - name: Build
         shell: bash
         run: |
           cd build
-          ninja
+          cmake --build . --config Release
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: shadowrealm-windows
-          path: build/shadowrealm.exe
+          path: build/Release/shadowrealm.exe
           retention-days: 30
