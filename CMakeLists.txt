@@ -82,11 +82,26 @@ if(NOT ANDROID)
         ${CMAKE_SOURCE_DIR}/glm
     )
     
-    # Link libraries
-    target_link_libraries(shadowrealm PRIVATE
-        OpenGL::OpenGL
-    )
+    # Link libraries - handle OpenGL differently for different platforms
+    if(APPLE)
+        # macOS: use framework directly
+        target_link_libraries(shadowrealm PRIVATE
+            ${OPENGL_LIBRARIES}
+        )
+    else()
+        # Linux/Windows: try to use OpenGL::OpenGL first, then fallback
+        if(TARGET OpenGL::OpenGL)
+            target_link_libraries(shadowrealm PRIVATE
+                OpenGL::OpenGL
+            )
+        else()
+            target_link_libraries(shadowrealm PRIVATE
+                ${OPENGL_LIBRARIES}
+            )
+        endif()
+    endif()
     
+    # Link GLFW
     if(glfw3_FOUND)
         target_link_libraries(shadowrealm PRIVATE glfw)
     else()
