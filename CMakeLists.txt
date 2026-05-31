@@ -1,3 +1,9 @@
+# include/
+  glad/
+    gl.h        ← copy to your repo at include/glad/gl.h
+src/
+  glad.c        ← copy to your repo at src/glad.c
+
 cmake_minimum_required(VERSION 3.18)
 project(ShadowRealm VERSION 1.0.0 LANGUAGES CXX C)
 
