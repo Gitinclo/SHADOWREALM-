@@ -164,3 +164,16 @@ jobs:
           name: shadowrealm-windows
           path: build/Release/shadowrealm.exe
           retention-days: 30
+# - name: Setup MSVC
+  uses: ilammy/msvc-dev-cmd@v1   # Add this step before cmake
+
+- name: Configure
+  run: cmake .. -DCMAKE_BUILD_TYPE=Release -G "Ninja"
+# - name: Fix GLAD header
+  run: |
+    pip3 install glad
+    glad --out-path /tmp/glad_out --api gl:core=3.3 c
+    cp /tmp/glad_out/include/glad/gl.h include/glad/gl.h
+    cp /tmp/glad_out/src/gl.c src/glad.c
+# - name: Install glad dependencies
+  run: python3 -m pip install --upgrade jinja2
