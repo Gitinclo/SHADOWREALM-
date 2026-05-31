@@ -1,9 +1,3 @@
-# include/
-  glad/
-    gl.h        ← copy to your repo at include/glad/gl.h
-src/
-  glad.c        ← copy to your repo at src/glad.c
-
 cmake_minimum_required(VERSION 3.18)
 project(ShadowRealm VERSION 1.0.0 LANGUAGES CXX C)
 
@@ -33,7 +27,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glad)
 glad_add_library(glad_gl REPRODUCIBLE LOADER API gl:core=3.3)
-
+include/
+  glad/
+    gl.h        ← copy to your repo at include/glad/gl.h
+src/
+  glad.c        ← copy to your repo at src/glad.c
     # ✅ CORRECT order at top of shadowrealm.cpp
 #include "glad/gl.h"         # GLAD first — loads OpenGL function pointers
 #define GLFW_INCLUDE_NONE    # Prevents GLFW from including its own OpenGL header
