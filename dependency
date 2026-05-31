@@ -1,0 +1,5 @@
+GLFW    ← FetchContent (built from source, no apt/brew/choco needed)
+GLM     ← FetchContent (header-only)
+ImGui   ← FetchContent
+GLAD    ← src/glad.c + include/glad/gl.h committed directly in repo ✓
+OpenGL  ← find_package (system, always present)
