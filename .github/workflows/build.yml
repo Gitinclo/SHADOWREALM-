@@ -23,6 +23,18 @@ jobs:
           cd build
           cmake ..
           make -j4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # This pulls your code into the runner
+
+      - name: Setup
+        run: |
+          chmod +x setup.sh
+          ./setup.sh
+      - name: Setup
+        run: |
+          chmod +x scripts/setup.sh
+          ./scripts/setup.sh
 
       - name: Install dependencies
         run: |
