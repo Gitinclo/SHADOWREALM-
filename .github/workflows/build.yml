@@ -7,7 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+            - name: Install Python dependencies
+        run: pip install jinja2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Add this block right before your build step
+      - name: Install Python dependencies for Glad
+        run: pip install jinja2
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make -j4
+
       - name: Install dependencies
         run: |
           sudo apt-get update
