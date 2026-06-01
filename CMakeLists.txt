@@ -53,17 +53,20 @@ if(NOT ANDROID)
     endif()
     message(STATUS "✅ ImGui found")
     
-    # Check if source file exists
-    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/src/shadowrealm.cpp")
-        message(WARNING "⚠️  src/shadowrealm.cpp not found - using main.cpp instead")
-        if(NOT EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
-            message(FATAL_ERROR "❌ Neither src/shadowrealm.cpp nor main.cpp found!")
-        endif()
-        set(MAIN_SOURCE "main.cpp")
-    else()
-        set(MAIN_SOURCE "src/shadowrealm.cpp")
+    # Check if backend files exist
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/imgui/backends/imgui_impl_glfw.cpp")
+        message(FATAL_ERROR "❌ ImGui GLFW backend not found!")
     endif()
-    message(STATUS "✅ Source file: ${MAIN_SOURCE}")
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/imgui/backends/imgui_impl_opengl3.cpp")
+        message(FATAL_ERROR "❌ ImGui OpenGL3 backend not found!")
+    endif()
+    message(STATUS "✅ ImGui backends found")
+    
+    # Check if main source file exists
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
+        message(FATAL_ERROR "❌ main.cpp not found!")
+    endif()
+    message(STATUS "✅ Source file: main.cpp")
     
     # ImGui sources
     set(IMGUI_SOURCES
@@ -77,7 +80,7 @@ if(NOT ANDROID)
     
     # Main executable
     add_executable(shadowrealm
-        ${MAIN_SOURCE}
+        main.cpp
         ${IMGUI_SOURCES}
     )
     
