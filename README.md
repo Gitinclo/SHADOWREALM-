@@ -1,105 +1,114 @@
 # 🎮 ShadowRealm 3D
 
-**Cross-platform MMORPG** with OpenGL 3.3, NFT system, Causality engine, and more!
-
-[![Build Status](https://github.com/Gitinclo/SHADOWREALM-/workflows/Build%20ShadowRealm%203D/badge.svg)](https://github.com/Gitinclo/SHADOWREALM-/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## 🚀 Quick Start
-
-### Desktop (Linux/macOS)
-```bash
-git clone https://github.com/Gitinclo/SHADOWREALM-.git
-cd SHADOWREALM-
-chmod +x setup.sh
-./setup.sh
-./build/shadowrealm
-```
-
-### Android
-```bash
-export ANDROID_NDK_ROOT=~/Android/Sdk/ndk/25.1.8937393
-chmod +x build_android.sh
-./build_android.sh
-```
-
-### Docker
-```bash
-docker build -t shadowrealm .
-docker run shadowrealm
-```
+A cross-platform 3D graphics engine built with C++ using modern OpenGL, GLFW, and ImGui. Designed for creating immersive 3D experiences with a focus on performance and visual quality.
 
 ## ✨ Features
 
-- ✅ **3D Graphics** - OpenGL 3.3 (Desktop) / ES 3.0 (Android)
-- ✅ **Shadow Mapping** - PCF shadows with 2K depth maps
-- ✅ **NFT System** - Rarity-based loot drops (Common → Mythic)
-- ✅ **TeratonBomb** - Nuclear weapon with physics-based explosions
-- ✅ **Infinite Devouring Domain** - Level 999 boss mechanic
-- ✅ **Causality Engine** - Cause/effect game logic system
-- ✅ **Minimap** - Real-time 2D overlay
-- ✅ **Enemy HP Bars** - 3D world + 2D projected
-- ✅ **Leaderboard** - Persistent player rankings
-- ✅ **Cross-Platform** - Windows, macOS, Linux, Android
+- 🎨 **Modern OpenGL 3.3 Core Profile** - High-performance graphics rendering
+- 🖥️ **Cross-Platform Support** - Windows, macOS, and Linux
+- 📱 **Android Support** - Mobile game development ready
+- 🎛️ **ImGui Integration** - Powerful debug UI and editor tools
+- 🎯 **GLM Mathematics** - Professional 3D math library
+- ⚡ **Optimized Performance** - Release builds with -O3 optimization
+- 🏗️ **CMake Build System** - Easy configuration and compilation
+- 🔄 **CI/CD Pipeline** - Automated builds on GitHub Actions
 
-## 🎮 Controls
+## 🛠️ Tech Stack
 
-| Key | Action |
-|-----|--------|
-| **W/A/S/D** | Move |
-| **RMB Drag** | Camera |
-| **Z** | Attack |
-| **X** | Power Attack |
-| **C** | Heal |
-| **Ctrl** | Dash |
-| **N** | Nuke |
-| **G** | Domain |
-| **F** | Fly Mode |
-| **F1** | Menu |
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| **OpenGL** | 3.3+ | Graphics API |
+| **GLFW** | 3.3+ | Window & Input Management |
+| **GLM** | 0.9.9.8 | Mathematics & Vectors |
+| **ImGui** | Latest | Debug UI & Editor |
+| **CMake** | 3.18+ | Build System |
+| **C++** | C++17 | Language Standard |
 
-## 📋 System Requirements
+## 📋 Requirements
 
-### Linux
+### Linux (Ubuntu/Debian)
 ```bash
-sudo apt-get install build-essential cmake libglfw3-dev libglm-dev libgl1-mesa-dev
+sudo apt-get install -y \
+    build-essential \
+    cmake \
+    libglfw3-dev \
+    libglm-dev \
+    libgl1-mesa-dev \
+    libx11-dev \
+    pkg-config
 ```
 
 ### macOS
 ```bash
-brew install glfw glm cmake
+brew install cmake glfw glm
 ```
 
 ### Windows
-- Visual Studio 2022 Community
+- Visual Studio 2022 (Community or Professional)
 - CMake 3.18+
+- GLFW3 (auto-downloaded during build)
+- GLM (auto-downloaded during build)
 
-### Android
-- Android NDK 25.1+
-- Android SDK API 21+
+## 🚀 Quick Start
 
-## 📁 Project Structure
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Gitinclo/SHADOWREALM-.git
+cd SHADOWREALM-
+```
+
+### 2. Using Setup Script (Interactive)
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+### 3. Manual Build
+
+**Linux/macOS:**
+```bash
+mkdir -p build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j4
+./shadowrealm
+```
+
+**Windows (with Visual Studio):**
+```bash
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022"
+cmake --build . --config Release
+.\Release\shadowrealm.exe
+```
+
+## 📂 Project Structure
 
 ```
 SHADOWREALM-/
-├── CMakeLists.txt              Main build config
-├── setup.sh                    Auto-setup script
-├── build_android.sh            Android build script
-├── Dockerfile                  Container build
-├── .github/workflows/
-│   └── build.yml               CI/CD pipeline
-├── src/
-│   ├── shadowrealm.cpp         Desktop version
-│   └── shadowrealm_mobile.cpp  Android version
-├── imgui/                      UI framework (auto-downloaded)
-├── glm/                        Math library (auto-downloaded)
-├── include/glad/               OpenGL loader (auto-downloaded)
-└── build/                      Build output
+├── src/                    # Source code
+│   ├── main.cpp            # Main entry point
+│   └── Causality.h         # Game logic system
+├── include/                # Header files
+│   └── glad/               # OpenGL loader
+├── imgui/                  # ImGui UI framework
+│   └── backends/           # GLFW & OpenGL backends
+├── glm/                    # GLM math library (auto-downloaded)
+├── build/                  # Build output (generated)
+├── .github/workflows/      # CI/CD configuration
+│   └── build.yml           # GitHub Actions workflow
+├── CMakeLists.txt          # CMake configuration
+├── setup.sh                # Setup script
+├── LICENSE                 # MIT License
+└── README.md               # This file
 ```
 
-## 🔧 Build Options
+## 🔨 Build Options
 
 ### Debug Build
 ```bash
+mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 make -j4
@@ -107,99 +116,200 @@ make -j4
 
 ### Release Build (Optimized)
 ```bash
+mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -march=native"
-make -j4
-```
-
-## 📊 Performance
-
-- **Desktop**: 60+ FPS @ 1280x720
-- **Android**: 30+ FPS @ 1080p
-- **Shadow Map**: 2048x2048 PCF
-- **Draw Calls**: 50-100 per frame
-
-## 🎯 Game Features
-
-### Combat System
-- Attack, Power Attack, Heal, Dash abilities
-- Enemy AI with aggro radius
-- Knockback physics
-- Damage numbers
-
-### NFT Inventory
-- 6 rarity tiers (Common → Mythic)
-- Weapon & Armor slots
-- Stat bonuses (STR, DEF)
-- Crypto rewards (CC)
-
-### Domain System
-- Level 1-999 progression
-- 5 unlockable skills
-- Soul Devour, Domain Suppression, Void Erasure, Breaker, Chaos
-- Dynamic range scaling
-
-### Causality Engine
-- 8 rule-based triggers
-- Automatic event firing
-- Level-up unlocks
-- Boss alerts
-- NFT airdrops
-
-## 🐛 Troubleshooting
-
-### Build Fails
-```bash
-# Clean and rebuild
-rm -rf build
-mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j4
 ```
 
-### Missing Dependencies
+### Windows Build with MSVC
 ```bash
-# Re-run setup
-./setup.sh
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022"
+cmake --build . --config Release
 ```
 
-### Android Build Issues
-```bash
-# Verify NDK path
-echo $ANDROID_NDK_ROOT
+## 🔄 CI/CD Pipeline
 
-# Set if not found
-export ANDROID_NDK_ROOT=~/Android/Sdk/ndk/25.1.8937393
+The project uses **GitHub Actions** for continuous integration:
+
+- **Linux Build:** Ubuntu latest with GCC
+- **macOS Build:** macOS latest with Clang
+- **Windows Build:** Windows latest with MSVC
+
+Build artifacts are automatically uploaded for each platform after successful builds.
+
+**View workflows:** [GitHub Actions](https://github.com/Gitinclo/SHADOWREALM-/actions)
+
+## 🎯 Usage Example
+
+```cpp
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <imgui/imgui.h>
+
+int main() {
+    // Initialize GLFW
+    if (!glfwInit()) return -1;
+    
+    // Create window
+    GLFWwindow* window = glfwCreateWindow(800, 600, "ShadowRealm", NULL, NULL);
+    if (!window) {
+        glfwTerminate();
+        return -1;
+    }
+    
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
+    
+    // Main loop
+    while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        
+        // Your rendering code here
+        
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+    
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return 0;
+}
 ```
 
-## 📈 CI/CD
+## 📦 Dependency Management
 
-GitHub Actions automatically builds on every push:
-- ✅ Linux (Ubuntu 22.04)
-- ✅ macOS (Latest)
-- ✅ Android (arm64-v8a)
+All external libraries are automatically handled during the build process:
 
-View builds: [Actions Tab](https://github.com/Gitinclo/SHADOWREALM-/actions)
+- **GLM** - Downloaded from GitHub releases during CMake configure
+- **ImGui** - Cloned from official repository during build
+- **GLAD** - Downloaded from glad.dav1d.de during build
+- **GLFW** - Installed via system package manager
 
-## 📜 License
+The build system will automatically skip downloads if libraries already exist locally.
 
-MIT License - See [LICENSE](LICENSE) file
+## 🐛 Troubleshooting
+
+### Issue: GLFW not found
+**Solution:**
+```bash
+# Linux
+sudo apt-get install libglfw3-dev
+
+# macOS
+brew install glfw
+
+# Windows - Auto-downloaded during CMake configure
+```
+
+### Issue: GLM not found
+**Solution:** The project automatically downloads GLM if not present. Ensure you have internet connectivity during the first build.
+
+### Issue: OpenGL errors
+**Solution:** Make sure your graphics drivers are up to date:
+- **NVIDIA:** Latest driver from [nvidia.com](https://www.nvidia.com/Download/driverDetails.aspx)
+- **AMD:** Latest driver from [amd.com](https://www.amd.com/en/support)
+- **Intel:** Latest driver from [intel.com](https://www.intel.com/content/www/us/en/support/products/80939/graphics/graphics-for-6th-generation-intel-processors.html)
+
+### Issue: CMake configuration fails
+**Solution:**
+```bash
+# Clean build directory and reconfigure
+rm -rf build
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+```
+
+## 📚 Learning Resources
+
+- [OpenGL Tutorial](https://learnopengl.com) - Comprehensive OpenGL guide
+- [GLM Documentation](https://github.com/g-truc/glm/wiki) - Math library reference
+- [GLFW Documentation](https://www.glfw.org/docs/latest/) - Window & input handling
+- [ImGui Guide](https://github.com/ocornut/imgui) - UI framework examples
+- [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html) - Build system guide
+
+## 📊 Build Status
+
+[![Build ShadowRealm 3D](https://github.com/Gitinclo/SHADOWREALM-/actions/workflows/build.yml/badge.svg)](https://github.com/Gitinclo/SHADOWREALM-/actions)
+
+## 📝 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+MIT License - You are free to use this project for personal and commercial purposes!
 
 ## 🤝 Contributing
 
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+Contributions are welcome! Here's how to contribute:
 
-## 📧 Contact
+1. **Fork** the repository
+2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** (`git commit -m 'Add amazing feature'`)
+4. **Push to the branch** (`git push origin feature/amazing-feature`)
+5. **Open a Pull Request**
 
-- GitHub: [@Gitinclo](https://github.com/Gitinclo)
-- Issues: [GitHub Issues](https://github.com/Gitinclo/SHADOWREALM-/issues)
+Please ensure your code follows the project's style and includes appropriate comments.
+
+## 📞 Contact & Support
+
+- **Author:** [Gitinclo](https://github.com/Gitinclo)
+- **Repository:** https://github.com/Gitinclo/SHADOWREALM-
+- **Report Issues:** [GitHub Issues](https://github.com/Gitinclo/SHADOWREALM-/issues)
+- **View Workflows:** [GitHub Actions](https://github.com/Gitinclo/SHADOWREALM-/actions)
+
+## 🎓 Project Status
+
+| Feature | Status |
+|---------|--------|
+| Desktop Builds (Linux/macOS/Windows) | ✅ Working |
+| CI/CD Pipeline | ✅ Configured |
+| ImGui Integration | ✅ Complete |
+| Android Support | 🔄 In Progress |
+| Documentation | ✅ Complete |
+| Example Projects | 📋 Planned |
+
+## 🚀 Upcoming Features
+
+- [ ] Example project templates
+- [ ] 3D Model loading (OBJ, FBX)
+- [ ] Advanced shader effects
+- [ ] Physics engine integration
+- [ ] Audio system
+- [ ] Mobile controls optimization
+
+## 💡 Tips for Beginners
+
+1. **Start with the quick start guide** above
+2. **Check the OpenGL tutorial** if you're new to graphics programming
+3. **Use ImGui debug UI** to visualize your scene
+4. **Experiment with shader effects** for visual improvements
+5. **Profile your code** for performance optimization
+
+## 🎨 Custom Build with Different Generators
+
+```bash
+# Ninja generator (faster builds)
+cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+# Unix Makefiles
+cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+
+# Xcode (macOS)
+cmake .. -G Xcode -DCMAKE_BUILD_TYPE=Release
+
+# Visual Studio (Windows)
+cmake .. -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Release
+```
 
 ---
 
-**Made with ❤️ for the ShadowRealm community**
+**Made with ❤️ by Gitinclo**
 
-⭐ If you like this project, please star it!
+⭐ If you find this project useful, please consider giving it a star on GitHub!
+
+**Last Updated:** June 2026  
+**Version:** 1.0.0
