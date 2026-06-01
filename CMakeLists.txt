@@ -18,25 +18,18 @@ if(NOT ANDROID)
     find_package(OpenGL REQUIRED)
     message(STATUS "✅ OpenGL found: ${OPENGL_LIBRARIES}")
     
-     include(FetchContent)
-FetchContent_Declare(
-    glad
-    GIT_REPOSITORY https://github.com/Dav1dde/glad.git
-    GIT_TAG        v2.0.8
-    SOURCE_SUBDIR  cmake
-)
-FetchContent_MakeAvailable(glad)
-glad_add_library(glad_gl REPRODUCIBLE LOADER API gl:core=3.3)
-include/
-  glad/
-    gl.h        ← copy to your repo at include/glad/gl.h
-src/
-  glad.c        ← copy to your repo at src/glad.c
-    # ✅ CORRECT order at top of shadowrealm.cpp
-#include "glad/gl.h"         # GLAD first — loads OpenGL function pointers
-#define GLFW_INCLUDE_NONE    # Prevents GLFW from including its own OpenGL header
-#include <GLFW/glfw3.h>      # GLFW second
-
+    # Download and setup GLAD using FetchContent
+    include(FetchContent)
+    FetchContent_Declare(
+        glad
+        GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+        GIT_TAG        v2.0.8
+        SOURCE_SUBDIR  cmake
+    )
+    FetchContent_MakeAvailable(glad)
+    glad_add_library(glad_gl REPRODUCIBLE LOADER API gl:core=3.3)
+    message(STATUS "✅ GLAD downloaded and configured")
+    
     # Find GLFW
     find_package(glfw3 3.3 QUIET)
     if(NOT glfw3_FOUND)
@@ -54,8 +47,6 @@ src/
         message(FATAL_ERROR "❌ GLM not found at glm/glm/glm.hpp")
     endif()
     message(STATUS "✅ GLM found")
-   
-    message(STATUS "✅ GLAD found")
     
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/imgui/imgui.h")
         message(FATAL_ERROR "❌ ImGui not found at imgui/imgui.h")
@@ -98,7 +89,12 @@ src/
         ${CMAKE_SOURCE_DIR}/glm
     )
     
-    # Link libraries - handle OpenGL differently for different platforms
+    # Link libraries
+    target_link_libraries(shadowrealm PRIVATE
+        glad_gl
+    )
+    
+    # Link OpenGL - handle differently for different platforms
     if(APPLE)
         # macOS: use framework directly
         target_link_libraries(shadowrealm PRIVATE
