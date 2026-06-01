@@ -1,0 +1,18 @@
+// 1) member
+#ifdef SHADOWREALM_ADMIN_BUILD
+  std::unique_ptr<AdminConsole> adminConsole;
+#endif
+
+// 2) Game::update(dt)
+#ifdef SHADOWREALM_ADMIN_BUILD
+  if (adminConsole) {
+      if (adminConsole->isTimeFrozen()) return;
+      dt *= adminConsole->timeScale();
+      adminConsole->tick(dt);
+  }
+#endif
+
+// 3) after ImGui::NewFrame()
+#ifdef SHADOWREALM_ADMIN_BUILD
+  if (adminConsole) adminConsole->render(dt);
+#endif
