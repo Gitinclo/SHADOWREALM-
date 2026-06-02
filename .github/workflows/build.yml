@@ -13,14 +13,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential cmake libglfw3-dev libglm-dev libx11-dev pkg-config
 
-      - name: Download GLM and ImGui
+      - name: Download GLM
         run: |
           git clone --depth 1 https://github.com/g-truc/glm.git glm_tmp
           mkdir -p glm && mv glm_tmp/glm glm/glm && rm -rf glm_tmp
 
+      - name: Download ImGui
+        run: |
           git clone --depth 1 https://github.com/ocornut/imgui.git imgui_tmp
           mkdir -p imgui/backends
-          cp imgui_tmp/imgui*.{h,cpp} imgui/ 2>/dev/null || true
+          
+          # Copy core ImGui files
+          cp imgui_tmp/imgui.h imgui/
+          cp imgui_tmp/imgui.cpp imgui/
+          cp imgui_tmp/imgui_draw.cpp imgui/
+          cp imgui_tmp/imgui_tables.cpp imgui/
+          cp imgui_tmp/imgui_widgets.cpp imgui/
+          cp imgui_tmp/imgui_internal.h imgui/
+          cp imgui_tmp/imconfig.h imgui/
+          
+          # Copy backend files explicitly
+          cp imgui_tmp/backends/imgui_impl_glfw.h imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_glfw.cpp imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_opengl3.h imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_opengl3.cpp imgui/backends/
+          
           rm -rf imgui_tmp
 
       - name: Configure
@@ -43,14 +60,31 @@ jobs:
       - name: Install dependencies
         run: brew install cmake glfw
 
-      - name: Download GLM and ImGui
+      - name: Download GLM
         run: |
           git clone --depth 1 https://github.com/g-truc/glm.git glm_tmp
           mkdir -p glm && mv glm_tmp/glm glm/glm && rm -rf glm_tmp
 
+      - name: Download ImGui
+        run: |
           git clone --depth 1 https://github.com/ocornut/imgui.git imgui_tmp
           mkdir -p imgui/backends
-          cp imgui_tmp/imgui*.{h,cpp} imgui/ 2>/dev/null || true
+          
+          # Copy core ImGui files
+          cp imgui_tmp/imgui.h imgui/
+          cp imgui_tmp/imgui.cpp imgui/
+          cp imgui_tmp/imgui_draw.cpp imgui/
+          cp imgui_tmp/imgui_tables.cpp imgui/
+          cp imgui_tmp/imgui_widgets.cpp imgui/
+          cp imgui_tmp/imgui_internal.h imgui/
+          cp imgui_tmp/imconfig.h imgui/
+          
+          # Copy backend files explicitly
+          cp imgui_tmp/backends/imgui_impl_glfw.h imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_glfw.cpp imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_opengl3.h imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_opengl3.cpp imgui/backends/
+          
           rm -rf imgui_tmp
 
       - name: Configure
@@ -70,25 +104,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download GLM and ImGui
+      - name: Install Ninja
+        run: choco install ninja -y
+
+      - name: Download GLM
         shell: bash
         run: |
           git clone --depth 1 https://github.com/g-truc/glm.git glm_tmp
           mkdir -p glm && mv glm_tmp/glm glm/glm && rm -rf glm_tmp
 
+      - name: Download ImGui
+        shell: bash
+        run: |
           git clone --depth 1 https://github.com/ocornut/imgui.git imgui_tmp
           mkdir -p imgui/backends
-          cp imgui_tmp/imgui*.{h,cpp} imgui/ 2>/dev/null || true
+          
+          # Copy core ImGui files
+          cp imgui_tmp/imgui.h imgui/
+          cp imgui_tmp/imgui.cpp imgui/
+          cp imgui_tmp/imgui_draw.cpp imgui/
+          cp imgui_tmp/imgui_tables.cpp imgui/
+          cp imgui_tmp/imgui_widgets.cpp imgui/
+          cp imgui_tmp/imgui_internal.h imgui/
+          cp imgui_tmp/imconfig.h imgui/
+          
+          # Copy backend files explicitly
+          cp imgui_tmp/backends/imgui_impl_glfw.h imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_glfw.cpp imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_opengl3.h imgui/backends/
+          cp imgui_tmp/backends/imgui_impl_opengl3.cpp imgui/backends/
+          
           rm -rf imgui_tmp
 
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 17 2022"
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
 
       - name: Build
-        run: cmake --build build --config Release
+        run: cmake --build build
 
       - uses: actions/upload-artifact@v4
         with:
           name: shadowrealm-windows
-          path: build/Release/shadowrealm.exe
+          path: build/shadowrealm.exe
           retention-days: 30
