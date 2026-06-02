@@ -29,7 +29,13 @@ if(NOT ANDROID)
     FetchContent_MakeAvailable(glad)
     glad_add_library(glad_gl REPRODUCIBLE LOADER API gl:core=3.3)
     message(STATUS "✅ GLAD downloaded and configured")
-    
+    # Link GLFW
+if(glfw3_FOUND)
+    target_link_libraries(shadowrealm PRIVATE glfw)
+else()
+    target_link_libraries(shadowrealm PRIVATE ${GLFW_LIB})
+endif()
+
     # Find GLFW
     find_package(glfw3 3.3 QUIET)
     if(NOT glfw3_FOUND)
