@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowRealm - Open World MMORPG</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #0a0e27;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #game {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Loading screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a0e27;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            font-size: 24px;
+            color: #b366ff;
+        }
+
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #b366ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* HUD styles */
+        .hud {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .hud-top-left {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #ffffff;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        .hud-top-right {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #ffffff;
+            font-size: 14px;
+            text-align: right;
+            z-index: 100;
+        }
+
+        .hud-bottom-right {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: #ffffff;
+            font-size: 12px;
+            text-align: right;
+            z-index: 100;
+        }
+
+        .stat-bar {
+            width: 200px;
+            height: 20px;
+            background-color: #333;
+            border: 1px solid #666;
+            margin-top: 5px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .health-bar .stat-bar-fill {
+            background-color: #ff0000;
+        }
+
+        .mana-bar .stat-bar-fill {
+            background-color: #0000ff;
+        }
+
+        .exp-bar .stat-bar-fill {
+            background-color: #00ff00;
+        }
+
+        /* Chat box */
+        #chat {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            width: 300px;
+            height: 200px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #666;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            display: none;
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        #chat-input {
+            padding: 5px;
+            background-color: #1a1a1a;
+            border-top: 1px solid #666;
+            color: #ffffff;
+        }
+
+        #chat-input input {
+            width: 100%;
+            padding: 5px;
+            background-color: #333;
+            border: 1px solid #666;
+            color: #ffffff;
+            font-size: 12px;
+        }
+
+        /* Ability buttons */
+        .ability-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .ability-button {
+            width: 60px;
+            height: 60px;
+            background-color: #6b4c9a;
+            border: 2px solid #b366ff;
+            border-radius: 5px;
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+
+        .ability-button:hover {
+            background-color: #8b5cba;
+            box-shadow: 0 0 10px #b366ff;
+        }
+
+        .ability-button.cooldown {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ability-button.cooldown::after {
+            content: attr(data-cooldown);
+            position: absolute;
+            font-size: 10px;
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/index-B8sTW3RU.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/phaser-CIjcVCQt.js">
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading ShadowRealm...</p>
+    </div>
+
+    <div id="game"></div>
+
+    <div class="hud">
+        <div class="hud-top-left">
+            <div class="health-bar">
+                <div>Health</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" id="health-fill" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="mana-bar" style="margin-top: 10px;">
+                <div>Mana</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" id="mana-fill" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="exp-bar" style="margin-top: 10px;">
+                <div>Experience</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" id="exp-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            <div id="level-display" style="margin-top: 10px; font-size: 16px; font-weight: bold; color: #b366ff;">Level 1</div>
+        </div>
+
+        <div class="hud-top-right">
+            <div id="server-status" style="color: #00ff00;">● Connected</div>
+            <div id="fps-counter" style="margin-top: 5px;">FPS: 60</div>
+            <div id="player-count" style="margin-top: 5px;">Players: 1</div>
+        </div>
+
+        <div class="hud-bottom-right">
+            <div id="coordinates">X: 0 Y: 0</div>
+            <div id="enemies-nearby" style="margin-top: 5px;">Enemies: 0</div>
+        </div>
+    </div>
+
+    <div class="ability-buttons">
+        <button class="ability-button" data-ability="0" title="Q - Shadow Slash">Q</button>
+        <button class="ability-button" data-ability="1" title="W - Dark Cleave">W</button>
+        <button class="ability-button" data-ability="2" title="E - Void Shield">E</button>
+        <button class="ability-button" data-ability="3" title="R - Chaos Bringer">R</button>
+    </div>
+
+    <div id="chat">
+        <div id="chat-messages"></div>
+        <div id="chat-input">
+            <input type="text" placeholder="Press Enter to chat..." />
+        </div>
+    </div>
+
+</body>
+</html>
