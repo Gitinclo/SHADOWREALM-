@@ -173,4 +173,4 @@ else()
     message(STATUS "✅ Android build configured")
 endif()
 
-message(STATUS "✅ ShadowRealm 3D configured successfully
+message(STATUS "✅ ShadowRealm 3D configured successfully")
