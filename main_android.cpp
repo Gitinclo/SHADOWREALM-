@@ -1,4 +1,3 @@
-.
 // ========================================================================
 // Title:   ShadowRealm 3D – Android Open World RPG (HDR10+)
 // Author:  Single‑player MMORPG engine
